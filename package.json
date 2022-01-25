@@ -3,6 +3,10 @@
   "version": "0.0.2",
   "private": true,
   "dependencies": {
+    "@microsoft/fast-components": "^2.19.1",
+    "@microsoft/fast-element": "^1.7.0",
+    "@microsoft/fast-foundation": "^2.32.1",
+    "@microsoft/fast-react-wrapper": "^0.1.24",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -17,16 +21,19 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "EXTEND_ESLINT=true react-scripts start",
+    "build": "EXTEND_ESLINT=true react-scripts build",
+    "test": "EXTEND_ESLINT=true react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-unused-expressions": "off"
+    }
   },
   "browserslist": {
     "production": [
