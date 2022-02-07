@@ -1,0 +1,114 @@
+:root {
+  --sm-space: 1rem;
+  --md-space: 2rem;
+}
+
+.storybook-scroll-horizontal-media-scroller {
+  --gap: var(--md-space);
+  --size: 150px;
+
+  display: grid;
+  grid-auto-flow: column;
+  gap: calc(var(--gap) / 2);
+  margin: 0;
+
+  padding-inline: var(--gap);
+  padding-block: calc(var(--gap) / 2);
+
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline mandatory;
+  scroll-padding-inline: var(--gap);
+
+  & > li {
+    display: inline-block;
+
+    &:last-of-type figure {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+
+        inline-size: var(--gap);
+        block-size: 100%;
+
+        inset-block-start: 0;
+        inset-inline-end: calc(var(--gap) * -1);
+      }
+    }
+  }
+
+  & figure {
+    scroll-snap-align: start;
+  }
+
+  & a {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+
+    &:focus {
+      outline-offset: calc(var(--gap) / 4);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      & {
+        transition: outline-offset 0.25s ease;
+      }
+    }
+  }
+}
+
+figure {
+  display: grid;
+  gap: calc(var(--gap) / 2);
+  margin: 0;
+
+  cursor: pointer;
+  user-select: none;
+
+  & > picture {
+    inline-size: var(--size);
+    block-size: var(--size);
+  }
+
+  & img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+
+    border-radius: 1ch;
+    overflow: hidden;
+
+    background-image: linear-gradient(to bottom, hsl(0 0% 40%), hsl(0 0% 20%));
+  }
+
+  & > figcaption {
+    font-size: clamp(1rem, 0.75rem + 1vw, 2rem);
+    font-weight: 300;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  @media (prefers-reduced-data: reduce) {
+    & {
+      min-inline-size: var(--size);
+
+      & > picture {
+        display: none;
+      }
+    }
+  }
+}
+
+@supports (aspect-ratio: 1) {
+  .storybook-scroll-horizontal-media-scroller figure > picture {
+    inline-size: auto;
+    aspect-ratio: 4/3;
+
+    @media (width <= 480px) {
+      block-size: calc(var(--size) * 1.5);
+    }
+  }
+}

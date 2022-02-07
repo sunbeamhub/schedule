@@ -29,6 +29,7 @@
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
+    "roving-ux-react": "^1.2.3",
     "sass": "^1.49.0",
     "source-map-explorer": "^2.5.2",
     "swr": "^1.2.0",
