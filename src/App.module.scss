@@ -1,14 +1,7 @@
-fast-card {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-}
+.parent {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 
-h2 {
-  font-size: var(--type-ramp-plus-5-font-size);
-  line-height: var(--type-ramp-plus-5-line-height);
-}
-
-fast-card > fast-button {
-  align-self: flex-end;
+  /* Just for parent demo size */
+  height: 100vh;
 }

@@ -1,25 +1,25 @@
-import {
-  provideFASTDesignSystem,
-  fastCard,
-  fastButton,
-} from '@microsoft/fast-components';
-import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
+import Rota from 'pages/Rota';
 import React from 'react';
-import './App.module.scss';
-
-const { wrap } = provideReactWrapper(React, provideFASTDesignSystem());
-
-export const FastCard = wrap(fastCard());
-export const FastButton = wrap(fastButton());
+import { Route, Routes } from 'react-router-dom';
+import styles from './App.module.scss';
 
 function App() {
   return (
-    <FastCard>
-      <h2>FAST React</h2>
-      <FastButton appearance="accent" onClick={() => console.log('clicked')}>
-        Click Me
-      </FastButton>
-    </FastCard>
+    <div className={styles.parent}>
+      <header>Header</header>
+      <main>
+        <Routes>
+          <Route path="rota" element={<Rota />} />
+        </Routes>
+      </main>
+      <footer>
+        <ul>
+          <li>视图</li>
+          <li>搜索</li>
+          <li>通知</li>
+        </ul>
+      </footer>
+    </div>
   );
 }
 
