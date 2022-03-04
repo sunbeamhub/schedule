@@ -1,6 +1,5 @@
-import Rota from 'pages/Rota';
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import styles from './App.module.scss';
 
 function App() {
@@ -8,9 +7,7 @@ function App() {
     <div className={styles.parent}>
       <header>Header</header>
       <main>
-        <Routes>
-          <Route path="rota" element={<Rota />} />
-        </Routes>
+        <Outlet />
       </main>
       <footer>
         <ul>

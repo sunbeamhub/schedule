@@ -4,12 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ReportHandler } from 'web-vitals';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Rota from 'pages/Rota';
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
+    <BrowserRouter basename="schedule">
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route path="rota" element={<Rota />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
