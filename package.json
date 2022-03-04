@@ -99,6 +99,7 @@
     "@storybook/node-logger": "^6.4.14",
     "@storybook/preset-create-react-app": "^4.0.0",
     "@storybook/react": "^6.4.14",
+    "prettier-plugin-organize-imports": "^2.3.4",
     "webpack": "^5.67.0"
   }
 }
