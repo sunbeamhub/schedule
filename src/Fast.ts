@@ -1,7 +1,7 @@
 import {
-  provideFASTDesignSystem,
-  fastCard,
   fastButton,
+  fastCard,
+  provideFASTDesignSystem,
 } from '@microsoft/fast-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React from 'react';

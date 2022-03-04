@@ -1,11 +1,11 @@
+import Rota from 'pages/Rota';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { ReportHandler } from 'web-vitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Rota from 'pages/Rota';
+import { ReportHandler } from 'web-vitals';
+import App from './App';
+import './index.css';
+import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
