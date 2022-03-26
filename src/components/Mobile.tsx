@@ -9,13 +9,14 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { ROUTE_LIST, ROUTE_LIST_MAP } from 'config';
+import useNavigation from 'hooks/useNavigation';
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 function Mobile() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { ROUTE_LIST, ROUTE_LIST_MAP } = useNavigation();
 
   return (
     <Stack sx={{ height: 1 }}>
