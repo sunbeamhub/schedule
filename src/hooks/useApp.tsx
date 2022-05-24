@@ -2,7 +2,7 @@ import createTheme from '@mui/material/styles/createTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Laptop from 'components/Laptop';
 import Mobile from 'components/Mobile';
-import { ROUTE_LIST, ROUTE_LIST_MAP } from 'config';
+import useNavigation from 'hooks/useNavigation';
 import React from 'react';
 import { useRoutes } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ declare module '@mui/material/styles' {
 
 function useApp() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const { ROUTE_LIST, ROUTE_LIST_MAP } = useNavigation();
 
   const theme = React.useMemo(
     () =>
