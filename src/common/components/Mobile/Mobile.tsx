@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import useNavigation from 'hooks/useNavigation';
+import { useNavigation } from 'common/hooks/useNavigation';
 import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 

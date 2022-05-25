@@ -14,8 +14,8 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import useNavigation from 'hooks/useNavigation';
-import { RouteProps } from 'interface';
+import { useNavigation } from 'common/hooks/useNavigation';
+import { RouteProps } from 'common/interface';
 import React from 'react';
 import { Link, LinkProps, Outlet, useLocation } from 'react-router-dom';
 

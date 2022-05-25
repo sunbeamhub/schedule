@@ -3,12 +3,12 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import MessageIcon from '@mui/icons-material/Message';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
-import ExplorePage from 'components/Explore';
-import MePage from 'components/Me';
-import MessagePage from 'components/Message';
-import SchedulePage from 'components/Schedule';
-import SearchPage from 'components/Search';
-import { RouteProps } from 'interface';
+import { RouteProps } from 'common/interface';
+import ExplorePage from 'pages/Explore';
+import MePage from 'pages/Me';
+import MessagePage from 'pages/Message';
+import SchedulePage from 'pages/Schedule';
+import SearchPage from 'pages/Search';
 import { useTranslation } from 'react-i18next';
 
 function useNavigation() {
