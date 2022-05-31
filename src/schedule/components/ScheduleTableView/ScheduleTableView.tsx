@@ -56,6 +56,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const TodayTableCell = styled(TableCell)(({ theme }) => ({
+  '&': {
+    color: theme.palette.primary.main,
+    position: 'relative',
+  },
+  '&::after': {
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: '50%',
+    content: '""',
+    display: 'block',
+    height: GRID_UNIT.height * 0.618,
+    left: '50%',
+    position: 'absolute',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: GRID_UNIT.height * 0.618,
+  },
+}));
+
 function ScheduleTableView() {
   const draggableNodeRef = useRef<HTMLDivElement>(null);
   const tableContainerNodeRef = useRef<HTMLDivElement>(null);
@@ -66,6 +85,7 @@ function ScheduleTableView() {
   useEffect(() => {
     if (tableContainerNodeRef.current) {
       tableContainerNodeRef.current.scrollTo({
+        behavior: 'smooth',
         left: GRID_UNIT.width * (new Date().getDate() - 1),
       });
     }
@@ -85,11 +105,17 @@ function ScheduleTableView() {
           </StyledTableRow>
           <StyledTableRow>
             <TableCell>{t(`month.${new Date().getMonth() + 1}`)}</TableCell>
-            {dayColumns.map((col) => (
-              <TableCell align="center" key={col}>
-                {col}
-              </TableCell>
-            ))}
+            {dayColumns.map((col) =>
+              col === new Date().getDate() ? (
+                <TodayTableCell align="center" key={col}>
+                  {col}
+                </TodayTableCell>
+              ) : (
+                <TableCell align="center" key={col}>
+                  {col}
+                </TableCell>
+              )
+            )}
           </StyledTableRow>
         </TableHead>
         <TableBody>
