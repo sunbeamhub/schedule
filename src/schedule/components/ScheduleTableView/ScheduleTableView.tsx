@@ -3,11 +3,13 @@ import Chip, { ChipProps } from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
+import TableCell from '@mui/material/TableCell';
+import TableContainer, {
+  TableContainerProps,
+} from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import React from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import { useTranslation } from 'react-i18next';
 import { useSchedule, useWorkStatusChip } from 'schedule/hooks';
@@ -18,91 +20,103 @@ function getDaysInCurrentMonth() {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
+const GRID_UNIT = { height: 57, width: 92.3 };
+
 const dayColumns = Array.from(
   { length: getDaysInCurrentMonth() },
   (_, i) => i + 1
 );
+
 const weekColumns = Array.from({ length: getDaysInCurrentMonth() }, (_, i) =>
   new Date(new Date().getFullYear(), new Date().getMonth(), i + 1).getDay()
 );
 
-const RefChip = React.forwardRef<HTMLDivElement, ChipProps>(function (
-  props,
-  ref
-) {
+const RefChip = forwardRef<HTMLDivElement, ChipProps>(function (props, ref) {
   return <Chip {...props} ref={ref}></Chip>;
 });
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
-  },
-}));
+const RefTableContainer = forwardRef<HTMLDivElement, TableContainerProps>(
+  function (props, ref) {
+    return <TableContainer {...props} ref={ref}></TableContainer>;
+  }
+);
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  'td:first-of-type, th:first-of-type': {
+    left: 0,
+    position: 'sticky',
+    whiteSpace: 'nowrap',
+    zIndex: 3,
+  },
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  '&:last-child td, &:last-child th': {
+  '&:last-child td': {
     border: 0,
   },
 }));
 
 function ScheduleTableView() {
-  const nodeRef = React.useRef(null);
+  const draggableNodeRef = useRef<HTMLDivElement>(null);
+  const tableContainerNodeRef = useRef<HTMLDivElement>(null);
   const { scheduleTableViewList } = useSchedule();
   const { t } = useTranslation('schedule');
   const { workStatusColorMap, workStatusIconMap } = useWorkStatusChip();
 
+  useEffect(() => {
+    if (tableContainerNodeRef.current) {
+      tableContainerNodeRef.current.scrollTo({
+        left: GRID_UNIT.width * (new Date().getDate() - 1),
+      });
+    }
+  }, []);
+
   return (
-    <TableContainer>
+    <RefTableContainer ref={tableContainerNodeRef}>
       <Table stickyHeader={true}>
         <TableHead>
-          <TableRow>
-            <StyledTableCell sx={{ whiteSpace: 'nowrap' }}>
-              {t('week.week')}
-            </StyledTableCell>
+          <StyledTableRow>
+            <TableCell>{t('week.week')}</TableCell>
             {weekColumns.map((col, index) => (
-              <StyledTableCell align="center" key={index}>
+              <TableCell align="center" key={index}>
                 {t(`week.${col}`)}
-              </StyledTableCell>
+              </TableCell>
             ))}
-          </TableRow>
-          <TableRow>
-            <StyledTableCell sx={{ whiteSpace: 'nowrap' }}>
-              {t(`month.${new Date().getMonth() + 1}`)}
-            </StyledTableCell>
+          </StyledTableRow>
+          <StyledTableRow>
+            <TableCell>{t(`month.${new Date().getMonth() + 1}`)}</TableCell>
             {dayColumns.map((col) => (
-              <StyledTableCell align="center" key={col}>
+              <TableCell align="center" key={col}>
                 {col}
-              </StyledTableCell>
+              </TableCell>
             ))}
-          </TableRow>
+          </StyledTableRow>
         </TableHead>
         <TableBody>
           {scheduleTableViewList.map((row, rowIndex) => (
             <StyledTableRow key={row.number}>
-              <StyledTableCell>{row['0']}</StyledTableCell>
+              <TableCell>{row['0']}</TableCell>
               {dayColumns.map((col, colIndex) => (
-                <StyledTableCell align="center" key={col}>
+                <TableCell align="center" key={col}>
                   {row[col] ? (
                     <Draggable
                       bounds={{
-                        top: -57 * rowIndex,
-                        right: 92.3 * (dayColumns.length - colIndex - 1),
+                        top: -GRID_UNIT.height * rowIndex,
+                        right:
+                          GRID_UNIT.width * (dayColumns.length - colIndex - 1),
                         bottom:
-                          57 * (scheduleTableViewList.length - rowIndex - 1),
-                        left: -92.3 * colIndex,
+                          GRID_UNIT.height *
+                          (scheduleTableViewList.length - rowIndex - 1),
+                        left: -GRID_UNIT.width * colIndex,
                       }}
-                      grid={[92.3, 57]}
-                      nodeRef={nodeRef}
+                      grid={[GRID_UNIT.width, GRID_UNIT.height]}
+                      nodeRef={draggableNodeRef}
                     >
                       <RefChip
                         color={workStatusColorMap[row[col]]}
                         icon={workStatusIconMap[row[col]]}
                         label={t(`workStatus.${row[col]}`)}
-                        ref={nodeRef}
+                        ref={draggableNodeRef}
                         size="small"
                         variant="outlined"
                       />
@@ -110,13 +124,13 @@ function ScheduleTableView() {
                   ) : (
                     <Box sx={{ height: 24, width: 60.3 }}></Box>
                   )}
-                </StyledTableCell>
+                </TableCell>
               ))}
             </StyledTableRow>
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </RefTableContainer>
   );
 }
 
