@@ -79,7 +79,17 @@ function Laptop() {
             ))}
           </List>
         </Paper>
-        <Box sx={{ flex: 1, mt: 2.5, pb: 1, pl: 2, pr: 2 }}>
+        <Box
+          sx={{
+            flex: 1,
+            mt: 2.5,
+            overflow: 'hidden',
+            pb: 1,
+            pl: 2,
+            pr: 2,
+            width: '100%',
+          }}
+        >
           <Outlet />
         </Box>
       </Stack>
