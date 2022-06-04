@@ -7,7 +7,6 @@ export interface ScheduleProps {
     | 'day-off'
     | 'dayshift'
     | 'halfDay-off'
-    | 'leave'
     | 'nightshift'
     | 'outpatientClinic';
 }

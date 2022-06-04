@@ -29,7 +29,7 @@ function useSchedule() {
       id: '3',
       name: 'D',
       number: '004',
-      workStatus: 'leave',
+      workStatus: 'halfDay-off',
     },
     {
       date: new Date('2022-06-01'),

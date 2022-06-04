@@ -1,4 +1,3 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import BedIcon from '@mui/icons-material/Bed';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import CoffeeIcon from '@mui/icons-material/Coffee';
@@ -10,7 +9,6 @@ function useWorkStatusChip() {
     'day-off': 'default',
     dayshift: 'success',
     'halfDay-off': 'warning',
-    leave: 'default',
     nightshift: 'primary',
     outpatientClinic: 'secondary',
   };
@@ -19,7 +17,6 @@ function useWorkStatusChip() {
     'day-off': <BedIcon />,
     dayshift: <LightModeIcon />,
     'halfDay-off': <CoffeeIcon />,
-    leave: <AccessTimeIcon />,
     nightshift: <BedtimeIcon />,
     outpatientClinic: <LocalHospitalIcon />,
   };
