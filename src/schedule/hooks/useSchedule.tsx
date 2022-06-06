@@ -1,51 +1,10 @@
-import { ScheduleProps } from 'schedule/interface';
+import { useDoctor } from 'employee/hooks';
 import { ScheduleTableViewProps } from 'schedule/interface/ScheduleProps';
+import { autoDoctorSchedule } from 'schedule/logic';
 
 function useSchedule() {
-  const scheduleList: ScheduleProps[] = [
-    {
-      date: new Date('2022-06-01'),
-      id: '0',
-      name: 'A',
-      number: '001',
-      workStatus: 'day-off',
-    },
-    {
-      date: new Date('2022-06-01'),
-      id: '1',
-      name: 'B',
-      number: '002',
-      workStatus: 'dayshift',
-    },
-    {
-      date: new Date('2022-06-01'),
-      id: '2',
-      name: 'C',
-      number: '003',
-      workStatus: 'halfDay-off',
-    },
-    {
-      date: new Date('2022-06-01'),
-      id: '3',
-      name: 'D',
-      number: '004',
-      workStatus: 'halfDay-off',
-    },
-    {
-      date: new Date('2022-06-01'),
-      id: '4',
-      name: 'E',
-      number: '005',
-      workStatus: 'nightshift',
-    },
-    {
-      date: new Date('2022-06-01'),
-      id: '5',
-      name: 'F',
-      number: '006',
-      workStatus: 'outpatientClinic',
-    },
-  ];
+  const { doctorList } = useDoctor();
+  const { scheduleList } = autoDoctorSchedule({ doctorList });
 
   const scheduleTableViewList = Object.values(
     scheduleList.reduce(
@@ -56,7 +15,7 @@ function useSchedule() {
         let merged: Partial<ScheduleTableViewProps> = {
           ...(previousValue[currentValue.number] || {}),
           0: currentValue.name,
-          [currentValue.date.getUTCDate()]: currentValue.workStatus,
+          [currentValue.date.getDate()]: currentValue.workStatus,
           number: currentValue.number,
         };
 
