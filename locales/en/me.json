@@ -1,0 +1,15 @@
+{
+  "setting": {
+    "language": {
+      "chinese": "Chinese",
+      "english": "English",
+      "language": "Language"
+    },
+    "mode": {
+      "darkMode": "Dark Mode",
+      "lightMode": "Light Mode",
+      "mode": "Mode",
+      "system": "System"
+    }
+  }
+}

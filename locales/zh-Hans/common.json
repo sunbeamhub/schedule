@@ -1,4 +1,15 @@
 {
+  "laptop": {
+    "close": "关闭",
+    "login": "登录",
+    "notification": "通知",
+    "search": "搜索",
+    "setting": "设置"
+  },
+  "mobile": {
+    "more": "更多",
+    "search": "搜索"
+  },
   "navigation": {
     "explore": "发现",
     "me": "我的",

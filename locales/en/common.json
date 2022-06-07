@@ -1,4 +1,15 @@
 {
+  "laptop": {
+    "close": "Close",
+    "login": "Login",
+    "notification": "Notification",
+    "search": "Search",
+    "setting": "Setting"
+  },
+  "mobile": {
+    "more": "More",
+    "search": "Search"
+  },
   "navigation": {
     "explore": "Explore",
     "me": "Me",
