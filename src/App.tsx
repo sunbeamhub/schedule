@@ -4,8 +4,10 @@ import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Laptop } from 'common/components/Laptop';
 import { Mobile } from 'common/components/Mobile';
+import { ModeContext } from 'common/context/modeContext';
+import { useStickyState } from 'common/hooks';
 import { useNavigation } from 'common/hooks/useNavigation';
-import React from 'react';
+import { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 declare module '@mui/material/styles' {
@@ -21,11 +23,15 @@ declare module '@mui/material/styles' {
   }
 }
 
-function useApp() {
+function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const { ROUTE_LIST, ROUTE_LIST_MAP } = useNavigation();
+  const [mode, setMode] = useStickyState<'darkMode' | 'lightMode' | 'system'>(
+    'system',
+    'schedule_mode'
+  );
 
-  const theme = React.useMemo(
+  const theme = useMemo(
     () =>
       createTheme({
         breakpoints: {
@@ -40,9 +46,14 @@ function useApp() {
             defaultProps: { noSsr: true },
           },
         },
-        palette: { mode: prefersDarkMode ? 'dark' : 'light' },
+        palette: {
+          mode:
+            (mode === 'system' && prefersDarkMode) || mode === 'darkMode'
+              ? 'dark'
+              : 'light',
+        },
       }),
-    [prefersDarkMode]
+    [mode, prefersDarkMode]
   );
 
   const isMobile = useMediaQuery(theme.breakpoints.between('mobile', 'tablet'));
@@ -80,17 +91,13 @@ function useApp() {
       : [{ element: <></>, path: '*' }]
   );
 
-  return { theme, routes };
-}
-
-function App() {
-  const { theme, routes } = useApp();
-
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {routes}
-    </ThemeProvider>
+    <ModeContext.Provider value={{ mode, setMode }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {routes}
+      </ThemeProvider>
+    </ModeContext.Provider>
   );
 }
 

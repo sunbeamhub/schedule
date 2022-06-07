@@ -10,13 +10,14 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useNavigation } from 'common/hooks/useNavigation';
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 function Mobile() {
   const navigate = useNavigate();
   const location = useLocation();
   const { ROUTE_LIST, ROUTE_LIST_MAP } = useNavigation();
+  const { t } = useTranslation();
 
   return (
     <Stack sx={{ height: 1 }}>
@@ -35,7 +36,7 @@ function Mobile() {
           </Typography>
           <Box sx={{ flex: 1 }} />
           <IconButton
-            aria-label="搜索"
+            aria-label={t('mobile.search')}
             color="inherit"
             onClick={(event) => {
               navigate('search');
@@ -43,7 +44,7 @@ function Mobile() {
           >
             <SearchIcon />
           </IconButton>
-          <IconButton aria-label="更多" color="inherit" edge="end">
+          <IconButton aria-label={t('mobile.more')} color="inherit" edge="end">
             <MoreVertIcon />
           </IconButton>
         </Toolbar>
