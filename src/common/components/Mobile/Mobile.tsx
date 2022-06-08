@@ -52,7 +52,7 @@ function Mobile() {
       <Box sx={{ flex: 1, mt: 1, pb: 1, pl: 2, pr: 2 }}>
         <Outlet />
       </Box>
-      <Paper elevation={3}>
+      <Paper elevation={3} sx={{ pb: 'env(safe-area-inset-bottom, 20px)' }}>
         <BottomNavigation
           onChange={(event, value) => {
             navigate(value);
