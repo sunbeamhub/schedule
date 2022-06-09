@@ -10,6 +10,7 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useNavigation } from 'common/hooks/useNavigation';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -50,7 +51,9 @@ function Mobile() {
         </Toolbar>
       </AppBar>
       <Box sx={{ flex: 1, mt: 1, pb: 1, pl: 2, pr: 2 }}>
-        <Outlet />
+        <Suspense fallback="">
+          <Outlet />
+        </Suspense>
       </Box>
       <Paper elevation={3} sx={{ pb: 'env(safe-area-inset-bottom, 20px)' }}>
         <BottomNavigation

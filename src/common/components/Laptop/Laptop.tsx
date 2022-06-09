@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography';
 import { useNavigation } from 'common/hooks/useNavigation';
 import { RouteProps } from 'common/interface';
 import { Setting } from 'me/components/Setting';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, LinkProps, Outlet, useLocation } from 'react-router-dom';
 
@@ -104,7 +104,9 @@ function Laptop() {
             width: '100%',
           }}
         >
-          <Outlet />
+          <Suspense fallback="">
+            <Outlet />
+          </Suspense>
         </Box>
       </Stack>
       <Drawer
