@@ -70,6 +70,19 @@ registerRoute(
   })
 );
 
+/**
+ * Runtime caching route for i18next translation files
+ */
+registerRoute(
+  ({ url }) =>
+    url.origin === self.location.origin &&
+    new RegExp(/\/schedule\/locales\/.*\/.*\.json/).test(url.pathname),
+  new StaleWhileRevalidate({
+    cacheName: 'locales',
+    plugins: [new ExpirationPlugin({ maxEntries: 60 * 60 * 24 * 30 })],
+  })
+);
+
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener('message', (event) => {
