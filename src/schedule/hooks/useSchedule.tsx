@@ -1,13 +1,19 @@
 import { useDoctor } from 'employee/hooks';
-import { ScheduleTableViewProps } from 'schedule/interface/ScheduleProps';
-import { autoDoctorSchedule } from 'schedule/logic';
+import {
+  ScheduleProps,
+  ScheduleTableViewProps,
+} from 'schedule/interface/ScheduleProps';
+import useSWR from 'swr';
 
 function useSchedule() {
   const { doctorList } = useDoctor();
-  const { scheduleList } = autoDoctorSchedule({ doctorList });
+  const { data = [] } = useSWR<ScheduleProps[]>([
+    '/api/schedule/list',
+    doctorList,
+  ]);
 
   const scheduleTableViewList = Object.values(
-    scheduleList.reduce(
+    data.reduce(
       (
         previousValue: { [key: string]: Partial<ScheduleTableViewProps> },
         currentValue

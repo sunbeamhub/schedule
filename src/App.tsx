@@ -6,9 +6,12 @@ import { Laptop } from 'common/components/Laptop';
 import { Mobile } from 'common/components/Mobile';
 import { ModeContext } from 'common/context/modeContext';
 import { useStickyState } from 'common/hooks';
+import { useIdbProvider } from 'common/hooks/useIdbProvider';
 import { useNavigation } from 'common/hooks/useNavigation';
+import mock from 'mock';
 import { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
@@ -24,6 +27,10 @@ declare module '@mui/material/styles' {
 }
 
 function App() {
+  const { idbProvider } = useIdbProvider({
+    dbName: 'schedule-db',
+    storeName: 'schedule-store',
+  });
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const { ROUTE_LIST, ROUTE_LIST_MAP } = useNavigation();
   const [mode, setMode] = useStickyState<'darkMode' | 'lightMode' | 'system'>(
@@ -91,13 +98,25 @@ function App() {
       : [{ element: <></>, path: '*' }]
   );
 
+  if (!idbProvider) {
+    return <></>;
+  }
+
   return (
-    <ModeContext.Provider value={{ mode, setMode }}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {routes}
-      </ThemeProvider>
-    </ModeContext.Provider>
+    <SWRConfig
+      value={{
+        fetcher: (url, ...args) => mock[url].apply(null, args),
+        provider: idbProvider,
+        suspense: true,
+      }}
+    >
+      <ModeContext.Provider value={{ mode, setMode }}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {routes}
+        </ThemeProvider>
+      </ModeContext.Provider>
+    </SWRConfig>
   );
 }
 

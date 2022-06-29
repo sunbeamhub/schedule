@@ -1,12 +1,19 @@
 import { IDoctor } from 'employee/interface';
 import { ScheduleProps } from 'schedule/interface';
-import { v4 as uuidv4 } from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 
 const now = new Date();
 const thisMonth = now.getMonth();
 const thisYear = now.getFullYear();
 const firstDay = new Date(thisYear, thisMonth, 1);
 const lastDay = new Date(thisYear, thisMonth + 1, 0);
+
+const v1options = {
+  clockseq: 0x1234,
+  msecs: now.getTime(),
+  node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
+  nsecs: 5678,
+};
 
 function autoDoctorSchedule({
   doctorList = [],
@@ -20,6 +27,10 @@ function autoDoctorSchedule({
   startDay?: Date;
 }) {
   const scheduleList: ScheduleProps[] = [];
+
+  if (!doctorList.length) {
+    return { scheduleList };
+  }
 
   if (lastScheduleList.length) {
     lastScheduleList.sort(
@@ -90,7 +101,7 @@ function autoDoctorSchedule({
       });
     scheduleList.unshift({
       date: new Date(current),
-      id: uuidv4(),
+      id: uuidv1({ ...v1options, msecs: new Date(current).getTime() }),
       name: nightshiftDoctorList[0].name,
       number: nightshiftDoctorList[0].number,
       workStatus: 'nightshift',
@@ -149,7 +160,7 @@ function autoDoctorSchedule({
       });
     scheduleList.unshift({
       date: new Date(current),
-      id: uuidv4(),
+      id: uuidv1({ ...v1options, msecs: new Date(current).getTime() }),
       name: outpatientClinicDoctorList[0].name,
       number: outpatientClinicDoctorList[0].number,
       workStatus: 'outpatientClinic',
