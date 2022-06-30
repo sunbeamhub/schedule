@@ -15,7 +15,7 @@ const v1options = {
   nsecs: 5678,
 };
 
-function autoDoctorSchedule({
+function _autoDoctorSchedule({
   doctorList = [],
   endDay = lastDay,
   lastScheduleList = [],
@@ -183,6 +183,40 @@ function autoDoctorSchedule({
   );
 
   return { scheduleList };
+}
+
+function autoDoctorSchedule({
+  doctorList = [],
+  endDay = lastDay,
+  lastScheduleList = [],
+  startDay = firstDay,
+}: {
+  doctorList: IDoctor[];
+  endDay?: Date;
+  lastScheduleList?: ScheduleProps[];
+  startDay?: Date;
+}) {
+  if (lastScheduleList.length) {
+    return _autoDoctorSchedule({
+      doctorList,
+      endDay,
+      lastScheduleList,
+      startDay,
+    });
+  } else {
+    const { scheduleList: priorScheduleList } = _autoDoctorSchedule({
+      doctorList,
+      endDay: new Date(thisYear, thisMonth, 0),
+      startDay: new Date(thisYear, thisMonth - 1, 1),
+    });
+
+    return _autoDoctorSchedule({
+      doctorList,
+      endDay,
+      lastScheduleList: priorScheduleList,
+      startDay,
+    });
+  }
 }
 
 export default autoDoctorSchedule;
