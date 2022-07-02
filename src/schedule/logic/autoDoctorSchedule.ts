@@ -27,6 +27,10 @@ function _autoDoctorSchedule({
   startDay?: Date;
 }) {
   const scheduleList: ScheduleProps[] = [];
+  const byeNightshiftDoctorMap: { [key: IDoctor['number']]: [Date, Date] } = {};
+  const byeOutpatientClinicDoctorMap: {
+    [key: IDoctor['number']]: [Date, Date];
+  } = {};
 
   if (!doctorList.length) {
     return { scheduleList };
@@ -36,6 +40,32 @@ function _autoDoctorSchedule({
     lastScheduleList.sort(
       (prev, next) => next.date.getTime() - prev.date.getTime()
     );
+  }
+
+  if (lastScheduleList.length && doctorList.length % 7 === 0) {
+    lastScheduleList.forEach((schedule) => {
+      if (
+        schedule.date.getDay() !== 6 ||
+        !['nightshift', 'outpatientClinic'].includes(schedule.workStatus)
+      ) {
+        return;
+      }
+
+      const byeStartDay = new Date(schedule.date);
+      byeStartDay.setDate(byeStartDay.getDate() + 1);
+
+      const byeEndDay = new Date(schedule.date);
+      byeEndDay.setDate(byeEndDay.getDate() + 7 + doctorList.length - 1);
+
+      if (schedule.workStatus === 'nightshift') {
+        byeNightshiftDoctorMap[schedule.number] = [byeStartDay, byeEndDay];
+      } else if (schedule.workStatus === 'outpatientClinic') {
+        byeOutpatientClinicDoctorMap[schedule.number] = [
+          byeStartDay,
+          byeEndDay,
+        ];
+      }
+    });
   }
 
   for (
@@ -49,6 +79,7 @@ function _autoDoctorSchedule({
     // nightshift
     nightshiftSchedule({
       allScheduleList,
+      byeNightshiftDoctorMap,
       current,
       oneDayDoctorList,
       scheduleList,
@@ -57,6 +88,7 @@ function _autoDoctorSchedule({
     // outpatient clinic
     outpatientClinicSchedule({
       allScheduleList,
+      byeOutpatientClinicDoctorMap,
       current,
       oneDayDoctorList,
       scheduleList,
@@ -112,48 +144,40 @@ function autoDoctorSchedule({
 
 function nightshiftSchedule({
   allScheduleList,
+  byeNightshiftDoctorMap,
   current,
   oneDayDoctorList,
   scheduleList,
 }: {
   allScheduleList: ScheduleProps[];
+  byeNightshiftDoctorMap: { [key: IDoctor['number']]: [Date, Date] };
   current: Date;
   oneDayDoctorList: IDoctor[];
   scheduleList: ScheduleProps[];
 }) {
+  let ruleKeys = ['nightshiftRule1'];
+  if (oneDayDoctorList.length >= 4 && oneDayDoctorList.length < 6) {
+    ruleKeys = ruleKeys.concat(['nightshiftRule2']);
+  } else if (oneDayDoctorList.length >= 6) {
+    ruleKeys = ruleKeys.concat(['nightshiftRule2', 'nightshiftRule3']);
+  }
+
+  if (oneDayDoctorList.length % 7 === 0) {
+    ruleKeys = ruleKeys.concat(['nightshiftRule4']);
+  }
+
+  const scheduleRules = readScheduleRules();
   const nightshiftDoctorList = oneDayDoctorList
-    .filter((doctor) => doctor.onDuty.includes('nightshift'))
-    .filter((doctor) => {
-      const yesterday = new Date(current);
-      yesterday.setDate(yesterday.getDate() - 1);
-
-      const outpatientClinicDoctor = allScheduleList.find(
-        (schedule) =>
-          [0, 6].includes(schedule.date.getDay()) &&
-          schedule.date.toDateString() === yesterday.toDateString() &&
-          schedule.workStatus === 'outpatientClinic'
-      );
-      return (
-        !outpatientClinicDoctor ||
-        outpatientClinicDoctor.number !== doctor.number
-      );
-    })
-    .filter((doctor) => {
-      const theDayBeforeYesterday = new Date(current);
-      theDayBeforeYesterday.setDate(theDayBeforeYesterday.getDate() - 2);
-
-      const outpatientClinicDoctor = allScheduleList.find(
-        (schedule) =>
-          schedule.date.getDay() === 6 &&
-          schedule.date.toDateString() ===
-            theDayBeforeYesterday.toDateString() &&
-          schedule.workStatus === 'outpatientClinic'
-      );
-      return (
-        !outpatientClinicDoctor ||
-        outpatientClinicDoctor.number !== doctor.number
-      );
-    })
+    .filter((doctor) =>
+      ruleKeys.every((ruleIndex) =>
+        scheduleRules[ruleIndex].apply(null, [
+          doctor,
+          current,
+          allScheduleList,
+          byeNightshiftDoctorMap,
+        ])
+      )
+    )
     .sort((prevDoctor, nextDoctor) => {
       const prevScheduleDate =
         allScheduleList
@@ -181,6 +205,18 @@ function nightshiftSchedule({
     workStatus: 'nightshift',
   });
 
+  if (oneDayDoctorList.length % 7 === 0 && current.getDay() === 6) {
+    const byeStartDay = new Date(current);
+    byeStartDay.setDate(byeStartDay.getDate() + 1);
+
+    const byeEndDay = new Date(current);
+    byeEndDay.setDate(byeEndDay.getDate() + 7 + oneDayDoctorList.length - 1);
+    byeNightshiftDoctorMap[nightshiftDoctorList[0].number] = [
+      byeStartDay,
+      byeEndDay,
+    ];
+  }
+
   const nightshiftDoctorIndex = oneDayDoctorList.findIndex(
     (doctor) => doctor.number === nightshiftDoctorList[0].number
   );
@@ -189,41 +225,43 @@ function nightshiftSchedule({
 
 function outpatientClinicSchedule({
   allScheduleList,
+  byeOutpatientClinicDoctorMap,
   current,
   oneDayDoctorList,
   scheduleList,
 }: {
   allScheduleList: ScheduleProps[];
+  byeOutpatientClinicDoctorMap: { [key: IDoctor['number']]: [Date, Date] };
   current: Date;
   oneDayDoctorList: IDoctor[];
   scheduleList: ScheduleProps[];
 }) {
+  let ruleKeys = ['outpatientClinicRule1'];
+  if (oneDayDoctorList.length >= 3 && oneDayDoctorList.length < 5) {
+    ruleKeys = ruleKeys.concat(['outpatientClinicRule2']);
+  } else if (oneDayDoctorList.length >= 5) {
+    ruleKeys = ruleKeys.concat([
+      'outpatientClinicRule2',
+      'outpatientClinicRule3',
+    ]);
+  }
+
+  if ((oneDayDoctorList.length + 1) % 7 === 0) {
+    ruleKeys = ruleKeys.concat(['outpatientClinicRule4']);
+  }
+
+  const scheduleRules = readScheduleRules();
   const outpatientClinicDoctorList = oneDayDoctorList
-    .filter((doctor) => doctor.onDuty.includes('outpatientClinic'))
-    .filter((doctor) => {
-      const yesterday = new Date(current);
-      yesterday.setDate(yesterday.getDate() - 1);
-
-      const nightshiftDoctor = allScheduleList.find(
-        (schedule) =>
-          schedule.date.toDateString() === yesterday.toDateString() &&
-          schedule.workStatus === 'nightshift'
-      );
-      return !nightshiftDoctor || nightshiftDoctor.number !== doctor.number;
-    })
-    .filter((doctor) => {
-      const theDayBeforeYesterday = new Date(current);
-      theDayBeforeYesterday.setDate(theDayBeforeYesterday.getDate() - 2);
-
-      const nightshiftDoctor = allScheduleList.find(
-        (schedule) =>
-          schedule.date.getDay() === 6 &&
-          schedule.date.toDateString() ===
-            theDayBeforeYesterday.toDateString() &&
-          schedule.workStatus === 'nightshift'
-      );
-      return !nightshiftDoctor || nightshiftDoctor.number !== doctor.number;
-    })
+    .filter((doctor) =>
+      ruleKeys.every((ruleIndex) =>
+        scheduleRules[ruleIndex].apply(null, [
+          doctor,
+          current,
+          allScheduleList,
+          byeOutpatientClinicDoctorMap,
+        ])
+      )
+    )
     .sort((prevDoctor, nextDoctor) => {
       const prevScheduleDate =
         allScheduleList
@@ -251,10 +289,158 @@ function outpatientClinicSchedule({
     workStatus: 'outpatientClinic',
   });
 
+  if ((oneDayDoctorList.length + 1) % 7 === 0 && current.getDay() === 6) {
+    const byeStartDay = new Date(current);
+    byeStartDay.setDate(byeStartDay.getDate() + 1);
+
+    const byeEndDay = new Date(current);
+    byeEndDay.setDate(byeEndDay.getDate() + 7 + oneDayDoctorList.length);
+    byeOutpatientClinicDoctorMap[outpatientClinicDoctorList[0].number] = [
+      byeStartDay,
+      byeEndDay,
+    ];
+  }
+
   const outpatientClinicDoctorIndex = oneDayDoctorList.findIndex(
     (doctor) => doctor.number === outpatientClinicDoctorList[0].number
   );
   oneDayDoctorList.splice(outpatientClinicDoctorIndex, 1);
+}
+
+function readScheduleRules(): { [key: string]: Function } {
+  // nightshift rules
+  // nightshift onduty
+  function nightshiftRule1(doctor: IDoctor) {
+    return doctor.onDuty.includes('nightshift');
+  }
+
+  // yesterday outpatient clinic, no today nightshift
+  function nightshiftRule2(
+    doctor: IDoctor,
+    current: Date,
+    allScheduleList: ScheduleProps[]
+  ) {
+    const yesterday = new Date(current);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const outpatientClinicDoctor = allScheduleList.find(
+      (schedule) =>
+        [0, 6].includes(schedule.date.getDay()) &&
+        schedule.date.toDateString() === yesterday.toDateString() &&
+        schedule.workStatus === 'outpatientClinic'
+    );
+    return (
+      !outpatientClinicDoctor || outpatientClinicDoctor.number !== doctor.number
+    );
+  }
+
+  // the day before yesterday saturday & outpatient clinic, no today nightshift
+  function nightshiftRule3(
+    doctor: IDoctor,
+    current: Date,
+    allScheduleList: ScheduleProps[]
+  ) {
+    const theDayBeforeYesterday = new Date(current);
+    theDayBeforeYesterday.setDate(theDayBeforeYesterday.getDate() - 2);
+
+    const outpatientClinicDoctor = allScheduleList.find(
+      (schedule) =>
+        schedule.date.getDay() === 6 &&
+        schedule.date.toDateString() === theDayBeforeYesterday.toDateString() &&
+        schedule.workStatus === 'outpatientClinic'
+    );
+    return (
+      !outpatientClinicDoctor || outpatientClinicDoctor.number !== doctor.number
+    );
+  }
+
+  // bye when seven doctors on duty
+  function nightshiftRule4(
+    doctor: IDoctor,
+    current: Date,
+    allScheduleList: ScheduleProps[],
+    byeNightshiftDoctorMap: { [key: IDoctor['number']]: [Date, Date] }
+  ) {
+    const period = byeNightshiftDoctorMap[doctor.number];
+
+    return (
+      !period ||
+      !(
+        period[0].getTime() <= current.getTime() &&
+        current.getTime() < period[1].getTime()
+      )
+    );
+  }
+
+  // outpatient clinic rules
+  // outpatient clinic onduty
+  function outpatientClinicRule1(doctor: IDoctor) {
+    return doctor.onDuty.includes('outpatientClinic');
+  }
+
+  // yesterday nightshift, no today outpatient clinic
+  function outpatientClinicRule2(
+    doctor: IDoctor,
+    current: Date,
+    allScheduleList: ScheduleProps[]
+  ) {
+    const yesterday = new Date(current);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const nightshiftDoctor = allScheduleList.find(
+      (schedule) =>
+        schedule.date.toDateString() === yesterday.toDateString() &&
+        schedule.workStatus === 'nightshift'
+    );
+    return !nightshiftDoctor || nightshiftDoctor.number !== doctor.number;
+  }
+
+  // the day before yesterday saturday & nightshift, no today outpatient clinic
+  function outpatientClinicRule3(
+    doctor: IDoctor,
+    current: Date,
+    allScheduleList: ScheduleProps[]
+  ) {
+    const theDayBeforeYesterday = new Date(current);
+    theDayBeforeYesterday.setDate(theDayBeforeYesterday.getDate() - 2);
+
+    const nightshiftDoctor = allScheduleList.find(
+      (schedule) =>
+        schedule.date.getDay() === 6 &&
+        schedule.date.toDateString() === theDayBeforeYesterday.toDateString() &&
+        schedule.workStatus === 'nightshift'
+    );
+    return !nightshiftDoctor || nightshiftDoctor.number !== doctor.number;
+  }
+
+  // bye when seven doctors on duty
+  function outpatientClinicRule4(
+    doctor: IDoctor,
+    current: Date,
+    allScheduleList: ScheduleProps[],
+    byeOutpatientClinicDoctorMap: { [key: IDoctor['number']]: [Date, Date] }
+  ) {
+    const period = byeOutpatientClinicDoctorMap[doctor.number];
+
+    return (
+      !period ||
+      !(
+        period[0].getTime() <= current.getTime() &&
+        current.getTime() < period[1].getTime()
+      )
+    );
+  }
+
+  return {
+    nightshiftRule1,
+    nightshiftRule2,
+    nightshiftRule3,
+    nightshiftRule4,
+    outpatientClinicRule1,
+    outpatientClinicRule2,
+    outpatientClinicRule3,
+    outpatientClinicRule4,
+  };
 }
 
 export default autoDoctorSchedule;

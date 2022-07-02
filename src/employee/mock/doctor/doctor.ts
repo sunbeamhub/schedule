@@ -74,16 +74,16 @@ const doctorList: IDoctor[] = [
     number: '006',
     onDuty: ['dayshift', 'nightshift', 'outpatientClinic'],
   },
-  // {
-  //   group: 'G',
-  //   id: uuidv1({
-  //     ...v1options,
-  //     msecs: new Date(thisYear, thisMonth, 7).getTime(),
-  //   }),
-  //   name: 'G',
-  //   number: '007',
-  //   onDuty: ['dayshift', 'nightshift', 'outpatientClinic'],
-  // },
+  {
+    group: 'G',
+    id: uuidv1({
+      ...v1options,
+      msecs: new Date(thisYear, thisMonth, 7).getTime(),
+    }),
+    name: 'G',
+    number: '007',
+    onDuty: ['dayshift', 'nightshift', 'outpatientClinic'],
+  },
   // {
   //   group: 'G',
   //   id: uuidv1({
