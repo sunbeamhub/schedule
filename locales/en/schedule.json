@@ -13,6 +13,16 @@
     "11": "Nov.",
     "12": "Dec."
   },
+  "operation": {
+    "add": "Add",
+    "delete": "Delete",
+    "edit": "Edit",
+    "export": "Export",
+    "log": "Log",
+    "refresh": "Refresh",
+    "share": "Share",
+    "visibility": "Visibility"
+  },
   "week": {
     "0": "Sun.",
     "1": "Mon.",
