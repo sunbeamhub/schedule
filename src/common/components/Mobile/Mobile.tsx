@@ -9,8 +9,9 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { MoreAnchorElementContext } from 'common/context/moreAnchorElementContext';
 import { useNavigation } from 'common/hooks/useNavigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -18,7 +19,14 @@ function Mobile() {
   const navigate = useNavigate();
   const location = useLocation();
   const { ROUTE_LIST, ROUTE_LIST_MAP } = useNavigation();
+  const [moreAnchorElement, setMoreAnchorElement] = useState<
+    (EventTarget & HTMLButtonElement) | null
+  >(null);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    setMoreAnchorElement(null);
+  }, [location]);
 
   return (
     <Stack sx={{ height: 1 }}>
@@ -45,14 +53,28 @@ function Mobile() {
           >
             <SearchIcon />
           </IconButton>
-          <IconButton aria-label={t('mobile.more')} color="inherit" edge="end">
+          <IconButton
+            aria-controls={Boolean(moreAnchorElement) ? 'more-menu' : undefined}
+            aria-expanded={Boolean(moreAnchorElement) ? 'true' : undefined}
+            aria-haspopup="true"
+            aria-label={t('mobile.more')}
+            color="inherit"
+            edge="end"
+            onClick={(event) => {
+              setMoreAnchorElement(event.currentTarget);
+            }}
+          >
             <MoreVertIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
       <Box sx={{ flex: 1, mt: 1, pb: 1, pl: 2, pr: 2 }}>
         <Suspense fallback="">
-          <Outlet />
+          <MoreAnchorElementContext.Provider
+            value={{ moreAnchorElement, setMoreAnchorElement }}
+          >
+            <Outlet />
+          </MoreAnchorElementContext.Provider>
         </Suspense>
       </Box>
       <Paper elevation={3} sx={{ pb: 'env(safe-area-inset-bottom, 20px)' }}>
