@@ -6,7 +6,6 @@ import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShareIcon from '@mui/icons-material/Share';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -24,6 +23,15 @@ function OperationMenus() {
   const { t } = useTranslation('schedule');
 
   const scheduleOperationList = [
+    {
+      divider: true,
+      icon: <RefreshIcon />,
+      onClick: () => {
+        navigate(0);
+        setMoreAnchorElement(null);
+      },
+      text: t('operation.refresh'),
+    },
     {
       icon: <AddIcon />,
       onClick: () => {
@@ -60,11 +68,19 @@ function OperationMenus() {
       text: t('operation.visibility'),
     },
     {
+      divider: true,
       icon: <ImportExportIcon />,
       onClick: () => {
         setMoreAnchorElement(null);
       },
       text: t('operation.export'),
+    },
+    {
+      icon: <MonitorHeartIcon />,
+      onClick: () => {
+        setMoreAnchorElement(null);
+      },
+      text: t('operation.log'),
     },
   ];
 
@@ -72,41 +88,22 @@ function OperationMenus() {
     <Menu
       anchorEl={moreAnchorElement}
       id="more-menu"
-      MenuListProps={{ dense: true }}
+      MenuListProps={{ sx: { minWidth: 140 } }}
       onClose={() => {
         setMoreAnchorElement(null);
       }}
       open={Boolean(moreAnchorElement)}
     >
-      <MenuItem
-        onClick={() => {
-          navigate(0);
-          setMoreAnchorElement(null);
-        }}
-      >
-        <ListItemIcon>
-          <RefreshIcon />
-        </ListItemIcon>
-        <ListItemText>{t('operation.refresh')}</ListItemText>
-      </MenuItem>
-      <Divider />
       {scheduleOperationList.map((operation, index) => (
-        <MenuItem key={index} onClick={operation.onClick}>
+        <MenuItem
+          divider={operation.divider}
+          key={index}
+          onClick={operation.onClick}
+        >
           <ListItemIcon>{operation.icon}</ListItemIcon>
           <ListItemText>{operation.text}</ListItemText>
         </MenuItem>
       ))}
-      <Divider />
-      <MenuItem
-        onClick={() => {
-          setMoreAnchorElement(null);
-        }}
-      >
-        <ListItemIcon>
-          <MonitorHeartIcon />
-        </ListItemIcon>
-        <ListItemText>{t('operation.log')}</ListItemText>
-      </MenuItem>
     </Menu>
   );
 }
