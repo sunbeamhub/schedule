@@ -1,0 +1,8 @@
+{
+  "account": "Account",
+  "accountDescription": "Please enter phone or email",
+  "login": "Login",
+  "password": "Password",
+  "passwordDescription": "Please enter password",
+  "passwordVisibilityDescription": "Toggle password visibility"
+}

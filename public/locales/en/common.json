@@ -12,6 +12,7 @@
   },
   "navigation": {
     "explore": "Explore",
+    "login": "Login",
     "me": "Me",
     "message": "Message",
     "schedule": "Schedule",

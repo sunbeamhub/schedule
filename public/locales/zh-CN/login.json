@@ -1,0 +1,8 @@
+{
+  "account": "账户",
+  "accountDescription": "请输入手机号码或邮箱",
+  "login": "登录",
+  "password": "密码",
+  "passwordDescription": "请输入密码",
+  "passwordVisibilityDescription": "控制密码可见性"
+}

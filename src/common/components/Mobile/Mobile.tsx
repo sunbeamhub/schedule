@@ -85,14 +85,16 @@ function Mobile() {
           showLabels
           value={location.pathname.slice(1)}
         >
-          {ROUTE_LIST.filter((route) => !route.hidden).map((route, index) => (
-            <BottomNavigationAction
-              icon={route.icon}
-              key={index}
-              label={route.label}
-              value={route.path}
-            />
-          ))}
+          {ROUTE_LIST.filter((route) => route.menus?.includes('mobile')).map(
+            (route, index) => (
+              <BottomNavigationAction
+                icon={route.icon}
+                key={index}
+                label={route.label}
+                value={route.path}
+              />
+            )
+          )}
         </BottomNavigation>
       </Paper>
     </Stack>

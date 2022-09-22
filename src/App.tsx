@@ -10,7 +10,7 @@ import { useIdbProvider } from 'common/hooks/useIdbProvider';
 import { useNavigation } from 'common/hooks/useNavigation';
 import mock from 'mock';
 import { useMemo } from 'react';
-import { useRoutes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 
 declare module '@mui/material/styles' {
@@ -70,30 +70,34 @@ function App() {
   const routes = useRoutes(
     isMobile
       ? [
+          { element: <Navigate replace to="schedule" />, path: '/' },
           {
-            children: ROUTE_LIST.filter(
-              (route) => !['search'].includes(route.path)
-            ).map((route) => ({
-              element: route.element,
-              path: route.path,
-            })),
+            children: ROUTE_LIST.filter((route) => route.hasLayout).map(
+              (route) => ({
+                element: route.element,
+                path: route.path,
+              })
+            ),
             element: <Mobile />,
           },
+          { element: ROUTE_LIST_MAP['login'].element, path: 'login' },
           { element: ROUTE_LIST_MAP['search'].element, path: 'search' },
         ]
       : isTablet
       ? [{ element: <></>, path: '*' }]
       : isLaptop
       ? [
+          { element: <Navigate replace to="schedule" />, path: '/' },
           {
-            children: ROUTE_LIST.filter(
-              (route) => !['search'].includes(route.path)
-            ).map((route) => ({
-              element: route.element,
-              path: route.path,
-            })),
+            children: ROUTE_LIST.filter((route) => route.hasLayout).map(
+              (route) => ({
+                element: route.element,
+                path: route.path,
+              })
+            ),
             element: <Laptop />,
           },
+          { element: ROUTE_LIST_MAP['login'].element, path: 'login' },
         ]
       : [{ element: <></>, path: '*' }]
   );

@@ -83,14 +83,16 @@ function Laptop() {
       <Stack direction="row" sx={{ flex: 1 }}>
         <Paper elevation={1}>
           <List sx={{ height: 1 }}>
-            {ROUTE_LIST.filter((route) => !route.hidden).map((route, index) => (
-              <ListItemLink
-                icon={route.icon}
-                key={index}
-                label={route.label}
-                path={route.path}
-              />
-            ))}
+            {ROUTE_LIST.filter((route) => route.menus?.includes('laptop')).map(
+              (route, index) => (
+                <ListItemLink
+                  icon={route.icon}
+                  key={index}
+                  label={route.label}
+                  path={route.path}
+                />
+              )
+            )}
           </List>
         </Paper>
         <Box
