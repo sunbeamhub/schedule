@@ -12,6 +12,7 @@
   },
   "navigation": {
     "explore": "发现",
+    "login": "登录",
     "me": "我的",
     "message": "消息",
     "schedule": "值班",
