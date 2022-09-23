@@ -9,7 +9,7 @@ import { useStickyState } from 'common/hooks';
 import { useIdbProvider } from 'common/hooks/useIdbProvider';
 import { useNavigation } from 'common/hooks/useNavigation';
 import mock from 'mock';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import { SWRConfig } from 'swr';
 
@@ -37,6 +37,12 @@ function App() {
     'system',
     'schedule_mode'
   );
+
+  useEffect(() => {
+    if (Notification.permission !== 'denied') {
+      Notification.requestPermission();
+    }
+  }, []);
 
   const theme = useMemo(
     () =>

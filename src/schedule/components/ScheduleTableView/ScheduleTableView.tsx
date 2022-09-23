@@ -12,7 +12,8 @@ import TableRow from '@mui/material/TableRow';
 import { forwardRef, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import { useTranslation } from 'react-i18next';
-import { useSchedule, useWorkStatusChip } from 'schedule/hooks';
+import { useWorkStatusChip } from 'schedule/hooks';
+import { ScheduleTableViewProps } from 'schedule/interface/ScheduleProps';
 
 function getDaysInCurrentMonth() {
   const date = new Date();
@@ -75,10 +76,13 @@ const TodayTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-function ScheduleTableView() {
+function ScheduleTableView({
+  scheduleTableViewList = [],
+}: {
+  scheduleTableViewList: Partial<ScheduleTableViewProps>[];
+}) {
   const draggableNodeRef = useRef<HTMLDivElement>(null);
   const tableContainerNodeRef = useRef<HTMLDivElement>(null);
-  const { scheduleTableViewList } = useSchedule();
   const { t } = useTranslation('schedule');
   const { workStatusColorMap, workStatusIconMap } = useWorkStatusChip();
 

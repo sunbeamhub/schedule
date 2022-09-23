@@ -2,20 +2,26 @@ import CheckIcon from '@mui/icons-material/Check';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LanguageIcon from '@mui/icons-material/Language';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import Switch from '@mui/material/Switch';
 import { ModeContext } from 'common/context/modeContext';
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuidV4 } from 'uuid';
 
 function Setting() {
   const { mode: muiMode, setMode: setMuiMode } = useContext(ModeContext);
+  const [notificationPermission, setNotificationPermission] = useState(
+    Notification.permission === 'granted'
+  );
   const { i18n, t } = useTranslation('me');
 
   const languageList: Array<{ [key: string]: any }> = [
@@ -90,6 +96,27 @@ function Setting() {
           {index < languageList.length - 1 ? <Divider /> : <></>}
         </Fragment>
       ))}
+      <ListSubheader>{t('setting.notification.notification')}</ListSubheader>
+      <ListItem>
+        <ListItemIcon>
+          <NotificationsIcon />
+        </ListItemIcon>
+        <ListItemText
+          id="notification-permission"
+          primary={t('setting.notification.permission')}
+        />
+        <Switch
+          checked={notificationPermission}
+          disabled={Notification.permission !== 'default'}
+          edge="end"
+          inputProps={{ 'aria-labelledby': 'notification-permission' }}
+          onChange={() => {
+            Notification.requestPermission((permission) => {
+              setNotificationPermission(permission === 'granted');
+            });
+          }}
+        />
+      </ListItem>
     </List>
   );
 }

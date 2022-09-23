@@ -44,7 +44,7 @@ function useSchedule() {
     )
   );
 
-  return { scheduleTableViewList };
+  return { scheduleList: data, scheduleTableViewList };
 }
 
 export default useSchedule;
