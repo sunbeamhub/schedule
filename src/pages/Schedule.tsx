@@ -31,7 +31,11 @@ function Schedule() {
       t2('today') +
       ` (${t2('week.week')} ${t2('week.' + today.getDay())}) ` +
       t1('navigation.schedule');
-    new Notification(title, options);
+
+    navigator.serviceWorker
+      .getRegistration()
+      .then((reg) => reg?.showNotification(title, options))
+      .catch(console.error);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
