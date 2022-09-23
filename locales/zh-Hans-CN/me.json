@@ -10,6 +10,10 @@
       "lightMode": "亮色",
       "mode": "模式",
       "system": "系统"
+    },
+    "notification": {
+      "notification": "通知",
+      "permission": "允许通知"
     }
   }
 }
