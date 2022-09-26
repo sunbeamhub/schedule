@@ -20,7 +20,7 @@ import { v4 as uuidV4 } from 'uuid';
 function Setting() {
   const { mode: muiMode, setMode: setMuiMode } = useContext(ModeContext);
   const [notificationPermission, setNotificationPermission] = useState(
-    Notification.permission === 'granted'
+    'Notification' in window ? Notification.permission === 'granted' : false
   );
   const { i18n, t } = useTranslation('me');
 
@@ -107,10 +107,19 @@ function Setting() {
         />
         <Switch
           checked={notificationPermission}
-          disabled={Notification.permission !== 'default'}
+          disabled={
+            'Notification' in window
+              ? Notification.permission !== 'default'
+              : true
+          }
           edge="end"
           inputProps={{ 'aria-labelledby': 'notification-permission' }}
           onChange={() => {
+            if (!('Notification' in window)) {
+              console.error('Notification API not supported!');
+              return;
+            }
+
             Notification.requestPermission((permission) => {
               setNotificationPermission(permission === 'granted');
             });
