@@ -39,6 +39,11 @@ function App() {
   );
 
   useEffect(() => {
+    if (!('Notification' in window)) {
+      console.error('Notification API not supported!');
+      return;
+    }
+
     if (Notification.permission !== 'denied') {
       Notification.requestPermission();
     }

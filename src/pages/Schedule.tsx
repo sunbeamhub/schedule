@@ -10,7 +10,11 @@ function Schedule() {
   const { t: t2 } = useTranslation('schedule');
 
   useEffect(() => {
-    if (Notification.permission !== 'granted') {
+    if (
+      !('Notification' in window) ||
+      !('serviceWorker' in navigator) ||
+      Notification.permission !== 'granted'
+    ) {
       return;
     }
 
