@@ -11,9 +11,11 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { MoreAnchorElementContext } from 'common/context/moreAnchorElementContext';
-import { useContext } from 'react';
+import { memo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+
+const MenuItemMemo = memo(MenuItem);
 
 function OperationMenus() {
   const { moreAnchorElement, setMoreAnchorElement } = useContext(
@@ -26,6 +28,7 @@ function OperationMenus() {
     {
       divider: true,
       icon: <RefreshIcon />,
+      id: 'refresh',
       onClick: () => {
         navigate(0);
         setMoreAnchorElement(null);
@@ -34,6 +37,7 @@ function OperationMenus() {
     },
     {
       icon: <AddIcon />,
+      id: 'add',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -41,6 +45,7 @@ function OperationMenus() {
     },
     {
       icon: <EditIcon />,
+      id: 'edit',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -48,6 +53,7 @@ function OperationMenus() {
     },
     {
       icon: <DeleteIcon />,
+      id: 'delete',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -55,6 +61,7 @@ function OperationMenus() {
     },
     {
       icon: <ShareIcon />,
+      id: 'share',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -62,6 +69,7 @@ function OperationMenus() {
     },
     {
       icon: <VisibilityIcon />,
+      id: 'visibility',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -70,6 +78,7 @@ function OperationMenus() {
     {
       divider: true,
       icon: <ImportExportIcon />,
+      id: 'export',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -77,6 +86,7 @@ function OperationMenus() {
     },
     {
       icon: <MonitorHeartIcon />,
+      id: 'log',
       onClick: () => {
         setMoreAnchorElement(null);
       },
@@ -94,15 +104,15 @@ function OperationMenus() {
       }}
       open={Boolean(moreAnchorElement)}
     >
-      {scheduleOperationList.map((operation, index) => (
-        <MenuItem
+      {scheduleOperationList.map((operation) => (
+        <MenuItemMemo
           divider={operation.divider}
-          key={index}
+          key={operation.id}
           onClick={operation.onClick}
         >
           <ListItemIcon>{operation.icon}</ListItemIcon>
           <ListItemText>{operation.text}</ListItemText>
-        </MenuItem>
+        </MenuItemMemo>
       ))}
     </Menu>
   );

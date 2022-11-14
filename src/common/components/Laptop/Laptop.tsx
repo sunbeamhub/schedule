@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography';
 import { useNavigation } from 'common/hooks/useNavigation';
 import { RouteProps } from 'common/interface';
 import { Setting } from 'me/components/Setting';
-import React, { Suspense, useState } from 'react';
+import React, { memo, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, LinkProps, Outlet, useLocation } from 'react-router-dom';
 
@@ -46,6 +46,8 @@ function ListItemLink(props: RouteProps) {
     </ListItemButton>
   );
 }
+
+const ListItemLinkMemo = memo(ListItemLink);
 
 function Laptop() {
   const location = useLocation();
@@ -84,10 +86,10 @@ function Laptop() {
         <Paper elevation={1}>
           <List sx={{ height: 1 }}>
             {ROUTE_LIST.filter((route) => route.menus?.includes('laptop')).map(
-              (route, index) => (
-                <ListItemLink
+              (route) => (
+                <ListItemLinkMemo
                   icon={route.icon}
-                  key={index}
+                  key={route.path}
                   label={route.label}
                   path={route.path}
                 />

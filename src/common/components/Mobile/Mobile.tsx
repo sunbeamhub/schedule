@@ -11,9 +11,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { MoreAnchorElementContext } from 'common/context/moreAnchorElementContext';
 import { useNavigation } from 'common/hooks/useNavigation';
-import { Suspense, useEffect, useState } from 'react';
+import { memo, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+
+const BottomNavigationActionMemo = memo(BottomNavigationAction);
 
 function Mobile() {
   const navigate = useNavigate();
@@ -86,10 +88,10 @@ function Mobile() {
           value={location.pathname.slice(1)}
         >
           {ROUTE_LIST.filter((route) => route.menus?.includes('mobile')).map(
-            (route, index) => (
-              <BottomNavigationAction
+            (route) => (
+              <BottomNavigationActionMemo
                 icon={route.icon}
-                key={index}
+                key={route.path}
                 label={route.label}
                 value={route.path}
               />
