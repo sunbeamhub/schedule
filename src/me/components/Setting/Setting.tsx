@@ -17,11 +17,7 @@ import { Fragment, useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuidV4 } from 'uuid';
 
-function Setting() {
-  const { mode: muiMode, setMode: setMuiMode } = useContext(ModeContext);
-  const [notificationPermission, setNotificationPermission] = useState(
-    'Notification' in window ? Notification.permission === 'granted' : false
-  );
+function LanguageWidget() {
   const { i18n, t } = useTranslation('me');
 
   const languageList: Array<{ [key: string]: any }> = [
@@ -40,6 +36,32 @@ function Setting() {
       primary: t('setting.language.english'),
     },
   ];
+
+  return (
+    <>
+      <ListSubheader>{t('setting.language.language')}</ListSubheader>
+      {languageList.map(({ icon, id, lng, locales, primary }, index) => (
+        <Fragment key={id}>
+          <ListItemButton
+            onClick={() => {
+              i18n.changeLanguage(lng);
+            }}
+            selected={locales.includes(i18n.language)}
+          >
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText primary={primary}></ListItemText>
+            {locales.includes(i18n.language) ? <CheckIcon /> : <></>}
+          </ListItemButton>
+          {index < languageList.length - 1 ? <Divider /> : <></>}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+function ModeWidget() {
+  const { mode: muiMode, setMode: setMuiMode } = useContext(ModeContext);
+  const { t } = useTranslation('me');
 
   const modeList: Array<{ [key: string]: any }> = [
     {
@@ -63,7 +85,7 @@ function Setting() {
   ];
 
   return (
-    <List>
+    <>
       <ListSubheader>{t('setting.mode.mode')}</ListSubheader>
       {modeList.map(({ icon, id, mode, primary }, index) => (
         <Fragment key={id}>
@@ -80,22 +102,18 @@ function Setting() {
           {index < modeList.length - 1 ? <Divider /> : <></>}
         </Fragment>
       ))}
-      <ListSubheader>{t('setting.language.language')}</ListSubheader>
-      {languageList.map(({ icon, id, lng, locales, primary }, index) => (
-        <Fragment key={id}>
-          <ListItemButton
-            onClick={() => {
-              i18n.changeLanguage(lng);
-            }}
-            selected={locales.includes(i18n.language)}
-          >
-            <ListItemIcon>{icon}</ListItemIcon>
-            <ListItemText primary={primary}></ListItemText>
-            {locales.includes(i18n.language) ? <CheckIcon /> : <></>}
-          </ListItemButton>
-          {index < languageList.length - 1 ? <Divider /> : <></>}
-        </Fragment>
-      ))}
+    </>
+  );
+}
+
+function NotificationWidget() {
+  const [notificationPermission, setNotificationPermission] = useState(
+    'Notification' in window ? Notification.permission === 'granted' : false
+  );
+  const { t } = useTranslation('me');
+
+  return (
+    <>
       <ListSubheader>{t('setting.notification.notification')}</ListSubheader>
       <ListItem>
         <ListItemIcon>
@@ -126,6 +144,16 @@ function Setting() {
           }}
         />
       </ListItem>
+    </>
+  );
+}
+
+function Setting() {
+  return (
+    <List>
+      <ModeWidget />
+      <LanguageWidget />
+      <NotificationWidget />
     </List>
   );
 }
